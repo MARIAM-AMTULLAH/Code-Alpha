@@ -1,0 +1,407 @@
+import java.io.Console;
+import java.util.Scanner;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+
+
+public class Main {
+    public static void main(String[] args) throws Exception {
+        hms();
+    }
+
+    public static void hms() throws Exception {
+        Scanner input = new Scanner(System.in);
+        System.out.println("\n__________WELCOME TO HOTEL MANAGEMENT SYSTEM!__________");
+        System.out.println("1. REGISTRATION");
+        System.out.println("2. LOGIN");
+        System.out.println("3. EXIT");
+
+        System.out.print("\nEnter Options:");
+        int opt = input.nextInt();
+        switch (opt) {
+            case 1:
+                register();
+                break;
+            case 2:
+                login();
+                break;
+            case 3:
+                exit();
+                break;
+            default:
+                System.out.println("Enter Valid Option");
+                break;
+        }
+    }
+
+    public static void mainmenu() throws Exception {
+        System.out.print("\n_____MAIN MENU_____");
+        Scanner input = new Scanner(System.in);
+        System.out.println("\n\n1. Room Categorize");
+        System.out.println("2. Reservations");
+        System.out.println("3. View Booking Details");
+        System.out.println("4. Payment Process");
+        System.out.println("5. Exit");
+
+        System.out.print("\nEnter Options:");
+        int options = input.nextInt();
+        switch (options) {
+            case 1:
+                Categorize();
+                break;
+            case 2:
+                reservation();
+                break;
+            case 3:
+                booking();
+                break;
+            case 4:
+                payment();
+                break;
+            case 5:
+                exit();
+                break;
+            default:
+                System.out.println("Enter Valid Option");
+                mainmenu();
+                break;
+        }
+    }
+
+    public static void Categorize() throws Exception {
+        Scanner input = new Scanner(System.in);
+
+        System.out.println("\n_______ROOM CATEGORIZE_______");
+        System.out.println("1. Standard Room        | Code: SC");
+        System.out.println("2. Executive Room       | Code: EX");
+        System.out.println("3. Deluxe Room          | Code: DX");
+        System.out.println("4. Honeymoon Suite Room | Code: HS");
+
+        System.out.println("| Floor: 1 |   Standard Room      | Room No: 01-15 | Price: 7,000  (per day)|");
+        System.out.println("| Floor: 2 |   Executive Room     | Room No: 16-30 | Price: 13,000 (per day)|");
+        System.out.println("| Floor: 3 |   Deluxe Room        | Room No: 31-40 | Price: 20,000 (per day)|");
+        System.out.println("| Floor: 4 | Honeymoon Suite Room | Room No: 41-50 | Price: 25,000 (per day)|");
+
+        mainmenu();
+    }
+
+    public static void reservation() throws Exception {
+        System.out.println("_____RESERVATION_____");
+        String path = "C:\\Users\\HP\\OneDrive\\Desktop\\HMS_reservation.txt";
+        String CurrentFileData = new String(Files.readAllBytes(Paths.get(path)));
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("\nEnter Guest Name: ");
+        String guest = scanner.nextLine();
+
+        System.out.print("Enter Phone No: ");
+        String phone = scanner.nextLine();
+
+        System.out.print("Enter Room Code (SC,EX,DX,HS): ");
+        String room = scanner.nextLine().toUpperCase();
+
+        while (!room.matches("SC|EX|DX|HS"))
+        {
+            System.out.print("Invalid room code. Enter Room Code (SC, EX, DX, HS): ");
+            room = scanner.nextLine().toUpperCase();
+        }
+
+        System.out.print("Enter Check-In Date(yyyy-MM-dd): ");
+        String check_in = scanner.nextLine();
+
+        System.out.print("Enter Check-Out Date(yyyy-MM-dd): ");
+        String checkout = scanner.nextLine();
+
+        System.out.print("No of Days: ");
+        int no_of_days = scanner.nextInt();
+
+        System.out.print("No of Rooms: ");
+        int no_of_rooms = scanner.nextInt();
+
+        System.out.print("No of Guest: ");
+        int no_of_guest = scanner.nextInt();
+
+        System.out.print("Enter Your ID No: ");
+        int id_no = scanner.nextInt();
+
+        scanner.nextLine();
+        System.out.print("Enter Your Country: ");
+        String country = scanner.nextLine();
+
+        System.out.print("Enter Your Full Address: ");
+        String address = scanner.nextLine();
+
+        int total = no_of_days * no_of_rooms;
+        double cart = 0;
+
+        if (room.equals("SC")) {
+            cart = total * 7000;
+        } else if (room.equals("EX")) {
+            cart = total * 13000;
+        } else if (room.equals("DX")) {
+            cart = total * 20000;
+        } else if (room.equals("HS")) {
+            cart = total * 25000;
+        }
+
+        System.out.print("\nTotal Amount: " + cart);
+
+        String userData = guest + "," + phone + "," + room + "," + check_in + "," + checkout + "," + no_of_days + "," + no_of_rooms + "," + no_of_guest + "," + id_no + "," + country + "," + address + "," + cart;
+        String newFiledata = CurrentFileData + "\n" + userData;
+        Files.write(Paths.get(path), newFiledata.getBytes(), StandardOpenOption.APPEND);
+        System.out.println("\n\tRoom Has Been Reserved!");
+        mainmenu();
+    }
+
+    public static void booking() throws Exception {
+        System.out.println("_____BOOKING DETAILS_____");
+        Scanner input = new Scanner(System.in);
+
+        System.out.print("\nEnter Your ID:");
+        int id = input.nextInt();
+
+        boolean view_booking = false;
+        String[] booking_details = getbookingdetails();
+
+        for (int i = 0; i < booking_details.length; i++) {
+            String booking = booking_details[i].trim();
+            String[] details = booking.split(",");
+
+
+            if (details.length >= 12) {
+                int guest_id = Integer.parseInt(details[8].trim());
+                if (id == guest_id) {
+                    System.out.println("\n Guest ID: " + details[8] + "\n Name: " + details[0] + "\n Phone No: " + details[1] + "\n Check-IN : " + details[3] + "\n Check-Out: " + details[4] + "\n Room Category: " + details[2] + "\n Days Reserved: " + details[5] + "\n No of Rooms: " + details[6] + "\n No of Guest: " + details[7] + "\n Booking Status: Confirmed");
+                    view_booking = true;
+                    mainmenu();
+                }
+            }
+        }
+        if (!view_booking) {
+            System.out.println("Invalid ID! Please try again.");
+
+            mainmenu();
+        }
+    }
+
+    public static void payment() throws Exception {
+        System.out.println("\n_____PAYMENT GATEWAY_____");
+        Scanner input = new Scanner(System.in);
+
+        System.out.println("\nEnter Payment Method you want to choose");
+        System.out.println("1. Debit Card");
+        System.out.println("2. Visa Card");
+        System.out.print("\nEnter Options: ");
+        int options = input.nextInt();
+        switch (options) {
+            case 1:
+                Debit();
+                break;
+            case 2:
+                Visa();
+                break;
+            default:
+                System.out.print("\nEnter Valid Options:");
+                payment();
+                break;
+        }
+
+        mainmenu();
+    }
+
+    public static void Debit() throws Exception {
+        System.out.println("\n_____DEBIT CARD_____");
+
+        Scanner input = new Scanner(System.in);
+        System.out.print("\nEnter Your ID:");
+        int id = input.nextInt();
+        boolean debit = false;
+        double cart = 0;
+
+        String[] payment_details = getbookingdetails();
+        for (int i = 0; i < payment_details.length; i++) {
+            String file = payment_details[i].trim();
+            String[] debit_file = file.split(",");
+            if (debit_file.length >= 12) {
+                int guest_id = Integer.parseInt(debit_file[8].trim());
+                cart = Double.parseDouble(debit_file[11].trim());
+
+                if (id == guest_id) {
+                    System.out.print("\nCART: " + cart);
+                    debit = true;
+                    break;
+                }
+            }
+
+        }
+        if (!debit) {
+            System.out.print("Invalid ID");
+            mainmenu();
+            return;
+        }
+
+        input.nextLine();
+        System.out.print("\nCardholder’s Name: ");
+        String card_name = input.nextLine();
+
+        System.out.print("\nCard Number: ");
+        long card_no = input.nextLong();
+
+        input.nextLine();
+        System.out.print("\nExpiration Date: ");
+        String exp_date = input.nextLine();
+
+        System.out.print("\nCVV Code: ");
+        int code = input.nextInt();
+
+        input.nextLine();
+        System.out.print("\nBilling Address: ");
+        String billing_address = input.nextLine();
+
+        System.out.print("\nPayment Amount: " + cart);
+
+        System.out.print("\nPIN: ");
+        int pin = input.nextInt();
+
+        System.out.print("\n\t__TRANSACTION SUCCESSFUL!__");
+
+        mainmenu();
+    }
+
+    public static void Visa() throws Exception {
+        System.out.println("_____VISA CARD_____");
+
+        Scanner input = new Scanner(System.in);
+        System.out.print("\nEnter Your ID:");
+        int id = input.nextInt();
+        boolean visa = false;
+        double cart = 0;
+
+        String[] payment_details = getbookingdetails();
+        for (int i = 0; i < payment_details.length; i++) {
+            String file = payment_details[i].trim();
+            String[] debit_file = file.split(",");
+            if (debit_file.length >= 12) {
+                int guest_id = Integer.parseInt(debit_file[8].trim());
+                cart = Double.parseDouble(debit_file[11].trim());
+
+                if (id == guest_id) {
+                    System.out.print("\nCART: " + cart);
+                    visa = true;
+                    break;
+                }
+            }
+
+        }
+        if (!visa) {
+            System.out.print("Invalid ID");
+            mainmenu();
+            return;
+        }
+
+        input.nextLine();
+        System.out.print("\n\nCardholder’s Name: ");
+        String card_name = input.nextLine();
+
+        System.out.print("\nCard Number: ");
+        long card_no = input.nextLong();
+
+        input.nextLine();
+        System.out.print("\nExpiration Date: ");
+        String exp_date = input.nextLine();
+
+        System.out.print("\nCVV Code: ");
+        int code = input.nextInt();
+
+        input.nextLine();
+        System.out.print("\nBilling Address: ");
+        String billing_address = input.nextLine();
+
+        System.out.print("\nPayment Amount: " + cart);
+        System.out.print("\n\t__TRANSACTION SUCCESSFUL!__");
+
+        mainmenu();
+    }
+
+public static void register() throws Exception {
+    System.out.println("_____REGISTRATION_____");
+    String path = "C:\\Users\\HP\\OneDrive\\Desktop\\HMS.txt";
+    String CurrentFileData = new String(Files.readAllBytes(Paths.get(path)));
+    Scanner scanner = new Scanner(System.in);
+
+    System.out.print("\nName: ");
+    String name = scanner.nextLine();
+    System.out.print("\nAge: ");
+    int age = scanner.nextInt();
+
+    scanner.nextLine();
+    System.out.print("\nGender: ");
+    String gender = scanner.nextLine();
+    System.out.print("\nUser Name or Email: ");
+    String user = scanner.nextLine();
+    System.out.print("\nPassword: ");
+    String pass = scanner.nextLine();
+
+    String userData = name + "," + age + "," + gender + "," + user + "," + pass;
+    String newFiledata = CurrentFileData + "\n" + userData;
+    Files.write(Paths.get(path), newFiledata.getBytes(), StandardOpenOption.WRITE);
+    System.out.println("\nYour information has been saved.");
+    hms();
+}
+
+public static String[] getProfiles() throws Exception {
+
+    String path = "C:\\Users\\HP\\OneDrive\\Desktop\\HMS.txt";
+    String readText = new String(Files.readAllBytes(Paths.get(path)));
+    String[] profiles = readText.split("\n");
+    return profiles;
+}
+
+public static void login() throws Exception{
+
+    System.out.println("_____LOGIN_____");
+
+    Scanner scanner = new Scanner(System.in);
+    System.out.print("\nEnter Username or Email:");
+    String user = scanner.nextLine();
+    System.out.print("\nEnter Your Password:");
+    String pass = scanner.nextLine();
+
+    boolean login_success=false;
+    String[] userProfiles = getProfiles();
+
+    for(int i=0;i < userProfiles.length;i++){
+        String profile = userProfiles[i];
+        String[] details = profile.split(",");
+
+    if (details.length==5 && user.equals(details[3]) && pass.equals(details[4])) {
+        System.out.println("\nLogin successful! Welcome, " + details[0] + ".");
+        login_success=true;
+        mainmenu();
+    }
+    }
+    if(!login_success) {
+        System.out.println("Login failed! Please try again.");
+        hms();
+    }
+}
+
+public static String[] getbookingdetails() throws Exception {
+
+    String path = "C:\\Users\\HP\\OneDrive\\Desktop\\HMS_reservation.txt";
+    String CurrentFileData = new String(Files.readAllBytes(Paths.get(path)));
+    String[] booking_profiles = CurrentFileData.split("\n");
+    return booking_profiles;
+}
+
+
+public static void exit()
+{
+    System.out.println(" Thanks For Coming :) ");
+
+}
+
+}
+
